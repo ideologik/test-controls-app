@@ -134,7 +134,7 @@ const HandleRotAndPos = ({ refE }: any) => {
         setPlayerState((prevState) => ({
           ...prevState,
           position: currentPosition,
-          rotation: currentRotation,
+          rotation: refE.current.rotation(),
         }));
 
         setPreviousPosition(currentPosition);

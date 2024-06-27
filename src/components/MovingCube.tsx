@@ -13,6 +13,7 @@ const MovingCube: React.FC = () => {
       // Obtener la posición y rotación actuales del cubo
       const currentPos = cubeRef.current.position;
       const currentRot = cubeRef.current.quaternion;
+      console.log(playerState.rotation);
 
       // Crear las posiciones y rotaciones objetivo basadas en el estado del jugador
       const targetPos = new THREE.Vector3(
@@ -21,12 +22,11 @@ const MovingCube: React.FC = () => {
         playerState.position.z + 1.5 // Ajusta esto según sea necesario
       );
 
-      const targetRot = new THREE.Quaternion().setFromEuler(
-        new THREE.Euler(
-          playerState.rotation.x,
-          playerState.rotation.y,
-          playerState.rotation.z
-        )
+      const targetRot = new THREE.Quaternion(
+        playerState.rotation.x,
+        playerState.rotation.y,
+        playerState.rotation.z,
+        playerState.rotation.w
       );
 
       // Interpolar la posición y rotación
