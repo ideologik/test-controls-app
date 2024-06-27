@@ -29,7 +29,7 @@ const App: React.FC = () => {
   const [playerState] = useAtom(playerStateAtom);
 
   const previousRotation = useRef(playerState.rotation);
-  // Memoizing the effect callback
+  // Memorizar el effect con callback
   const handlePlayerStateChange = useCallback(() => {
     if (!isEqual(playerState.rotation, previousRotation.current)) {
       previousRotation.current = playerState.rotation;
