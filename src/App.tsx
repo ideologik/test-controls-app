@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
@@ -31,14 +25,16 @@ const keyboardMap = [
 ];
 
 const App: React.FC = () => {
-  console.log("repinntando App");
   const ref = useRef<any>(null);
   const [playerState] = useAtom(playerStateAtom);
 
+  const previousRotation = useRef(playerState.rotation);
   // Memoizing the effect callback
   const handlePlayerStateChange = useCallback(() => {
-    // Do something with playerState
-    console.log("posicion", playerState.position);
+    if (!isEqual(playerState.rotation, previousRotation.current)) {
+      previousRotation.current = playerState.rotation;
+      console.log("rotacion", playerState.rotation);
+    }
   }, [playerState]);
 
   useEffect(() => {
@@ -75,7 +71,7 @@ const App: React.FC = () => {
 
 export default App;
 
-const UPDATE_SOCKET_INTERVAL = 1000; // ms
+const UPDATE_SOCKET_INTERVAL = 500; // ms
 
 const HandleRotAndPos = ({ refE }: any) => {
   const [playerState, setPlayerState] = useAtom(playerStateAtom);
@@ -119,7 +115,7 @@ const HandleRotAndPos = ({ refE }: any) => {
           y: refE.current.translation().y,
           z: refE.current.translation().z,
         },
-        4
+        10
       );
 
       const currentRotation = roundRotation(
@@ -128,7 +124,7 @@ const HandleRotAndPos = ({ refE }: any) => {
           y: refE.current.rotation().y,
           z: refE.current.rotation().z,
         },
-        4
+        10
       );
 
       if (
