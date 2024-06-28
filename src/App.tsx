@@ -1,20 +1,23 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  Suspense,
+} from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
-import Ecctrl, { EcctrlJoystick } from "ecctrl";
+import Ecctrl, { EcctrlAnimation, EcctrlJoystick } from "ecctrl";
 import Floor from "./components/Floor";
-import Cubes from "./components/Cubes";
-import Character from "./components/Character";
 import { useAtom } from "jotai";
 import { playerStateAtom } from "./playerStateStore";
 import { isEqual } from "lodash";
-import MovingCube from "./components/MovingCube";
+import Avatar from "./components/Avatar";
 
 // Memoizing the components to avoid unnecessary re-renders
 const MemoizedFloor = React.memo(Floor);
-const MemoizedCubes = React.memo(Cubes);
-const MemoizedCharacter = React.memo(Character);
+const MemoizedCharacter = React.memo(Avatar);
 
 const keyboardMap = [
   { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -23,9 +26,18 @@ const keyboardMap = [
   { name: "rightward", keys: ["ArrowRight", "KeyD"] },
   { name: "jump", keys: ["Space"] },
 ];
+const animationSet = {
+  idle: "Idle",
+  walk: "Walking",
+  run: "Running",
+  jump: "Jumping",
+  jumpIdle: "Jumping",
+  jumpLand: "Jumping",
+  fall: "Jumping",
+};
 
 const App: React.FC = () => {
-  const ref = useRef<any>(null);
+  const ref = useRef(null);
   const [playerState] = useAtom(playerStateAtom);
 
   const previousRotation = useRef(playerState.rotation);
@@ -42,30 +54,30 @@ const App: React.FC = () => {
   }, [handlePlayerStateChange]);
 
   return (
-    <>
-      <EcctrlJoystick>
-        <ambientLight />
-        <mesh>
-          <boxGeometry args={[1, 1, 1]} />
-        </mesh>
-      </EcctrlJoystick>
-      <Canvas shadows camera={{ position: [10, 10, 10], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-        <Physics>
-          <KeyboardControls map={keyboardMap}>
-            <Ecctrl debug ref={ref}>
-              <MemoizedHandleRotAndPos refE={ref} />
-              <MemoizedCharacter />
+    <Canvas shadows camera={{ position: [10, 10, 10], fov: 50 }}>
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+      <Physics>
+        <KeyboardControls map={keyboardMap}>
+          <Suspense fallback={null}>
+            <Ecctrl animated ref={ref}>
+              <EcctrlAnimation
+                characterURL={"./assets/avatars/Animations.glb"}
+                animationSet={animationSet}
+              >
+                {/* <MemoizedHandleRotAndPos refE={ref} /> */}
+                <MemoizedCharacter position={[0, -0.65, 0]} />
+              </EcctrlAnimation>
+              |
             </Ecctrl>
-          </KeyboardControls>
-          <MemoizedFloor />
-          <MemoizedCubes />
-          <MovingCube />
-        </Physics>
-        <OrbitControls />
-      </Canvas>
-    </>
+          </Suspense>
+        </KeyboardControls>
+        <MemoizedFloor />
+        {/* <MemoizedCubes />
+          <MovingCube /> */}
+      </Physics>
+      <OrbitControls />
+    </Canvas>
   );
 };
 
@@ -73,7 +85,7 @@ export default App;
 
 const UPDATE_SOCKET_INTERVAL = 500; // ms
 
-const HandleRotAndPos = ({ refE }: any) => {
+const HandleRotAndPos = ({ refE }) => {
   const [playerState, setPlayerState] = useAtom(playerStateAtom);
   const [previousPosition, setPreviousPosition] = useState(
     playerState.position
@@ -89,7 +101,7 @@ const HandleRotAndPos = ({ refE }: any) => {
   }, []);
 
   const roundPosition = useCallback(
-    (position: any, precision: number) => ({
+    (position, precision: number) => ({
       x: roundValue(position.x, precision),
       y: roundValue(position.y, precision),
       z: roundValue(position.z, precision),
@@ -98,10 +110,11 @@ const HandleRotAndPos = ({ refE }: any) => {
   );
 
   const roundRotation = useCallback(
-    (rotation: any, precision: number) => ({
+    (rotation, precision: number) => ({
       x: roundValue(rotation.x, precision),
       y: roundValue(rotation.y, precision),
       z: roundValue(rotation.z, precision),
+      w: roundValue(rotation.w, precision),
     }),
     [roundValue]
   );
@@ -115,7 +128,7 @@ const HandleRotAndPos = ({ refE }: any) => {
           y: refE.current.translation().y,
           z: refE.current.translation().z,
         },
-        10
+        4
       );
 
       const currentRotation = roundRotation(
@@ -123,8 +136,9 @@ const HandleRotAndPos = ({ refE }: any) => {
           x: refE.current.rotation().x,
           y: refE.current.rotation().y,
           z: refE.current.rotation().z,
+          w: refE.current.rotation().w,
         },
-        10
+        4
       );
 
       if (
@@ -134,7 +148,7 @@ const HandleRotAndPos = ({ refE }: any) => {
         setPlayerState((prevState) => ({
           ...prevState,
           position: currentPosition,
-          rotation: refE.current.rotation(),
+          rotation: currentRotation,
         }));
 
         setPreviousPosition(currentPosition);

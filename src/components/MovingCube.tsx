@@ -13,7 +13,6 @@ const MovingCube: React.FC = () => {
       // Obtener la posición y rotación actuales del cubo
       const currentPos = cubeRef.current.position;
       const currentRot = cubeRef.current.quaternion;
-      console.log(playerState.rotation);
 
       // Crear las posiciones y rotaciones objetivo basadas en el estado del jugador
       const targetPos = new THREE.Vector3(
