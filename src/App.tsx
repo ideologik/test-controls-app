@@ -14,6 +14,8 @@ import { useAtom } from "jotai";
 import { playerStateAtom } from "./playerStateStore";
 import { isEqual } from "lodash";
 import Avatar from "./components/Avatar";
+import Cubes from "./components/Cubes";
+import MovingCube from "./components/MovingCube";
 
 // Memoizing the components to avoid unnecessary re-renders
 const MemoizedFloor = React.memo(Floor);
@@ -75,8 +77,8 @@ const App: React.FC = () => {
             </Suspense>
           </KeyboardControls>
           <MemoizedFloor />
-          {/* <MemoizedCubes />
-          <MovingCube /> */}
+          <Cubes />
+          <MovingCube />
         </Physics>
         <MemoizedCharacter position={[0, 0, 0]} />
         <OrbitControls />
