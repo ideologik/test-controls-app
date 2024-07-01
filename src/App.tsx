@@ -76,6 +76,7 @@ const App: React.FC = () => {
           <MovingCube /> */}
       </Physics>
       <OrbitControls />
+      <Avatar />
     </Canvas>
   );
 };
