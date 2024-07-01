@@ -6,7 +6,7 @@ import React, {
   Suspense,
 } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { KeyboardControls, OrbitControls } from "@react-three/drei";
+import { KeyboardControls, OrbitControls, useGLTF } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import Ecctrl, { EcctrlAnimation, EcctrlJoystick } from "ecctrl";
 import Floor from "./components/Floor";
@@ -59,7 +59,7 @@ const App: React.FC = () => {
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
       <Physics>
         <KeyboardControls map={keyboardMap}>
-          <Suspense fallback={null}>
+          <Suspense fallback={<></>}>
             <Ecctrl animated ref={ref}>
               <EcctrlAnimation
                 characterURL={"./assets/avatars/Animations.glb"}
@@ -81,6 +81,7 @@ const App: React.FC = () => {
   );
 };
 
+useGLTF.preload("./assets/avatars/Animations.glb");
 export default App;
 
 const UPDATE_SOCKET_INTERVAL = 500; // ms

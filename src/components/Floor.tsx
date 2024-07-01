@@ -7,7 +7,7 @@ const floorTextureUrl = "./assets/textures/checkerboard.jpg"; // Ruta de tu text
 const Floor: React.FC = () => {
   const texture = useTexture(floorTextureUrl);
   return (
-    <RigidBody type="fixed">
+    <RigidBody type="fixed" colliders="trimesh">
       <mesh receiveShadow rotation-x={-Math.PI / 2}>
         <planeGeometry args={[50, 50]} />
         <meshStandardMaterial map={texture} />
