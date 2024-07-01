@@ -45,6 +45,7 @@ const App: React.FC = () => {
   const handlePlayerStateChange = useCallback(() => {
     if (!isEqual(playerState.rotation, previousRotation.current)) {
       previousRotation.current = playerState.rotation;
+      console.log("posicion", playerState.position);
       console.log("rotacion", playerState.rotation);
     }
   }, [playerState]);
@@ -54,38 +55,40 @@ const App: React.FC = () => {
   }, [handlePlayerStateChange]);
 
   return (
-    <Canvas shadows camera={{ position: [10, 10, 10], fov: 50 }}>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-      <Physics>
-        <KeyboardControls map={keyboardMap}>
-          <Suspense fallback={<></>}>
-            <Ecctrl animated ref={ref}>
-              <EcctrlAnimation
-                characterURL={"./assets/avatars/Animations.glb"}
-                animationSet={animationSet}
-              >
-                <MemoizedHandleRotAndPos refE={ref} />
-                <MemoizedCharacter />
-              </EcctrlAnimation>
-            </Ecctrl>
-          </Suspense>
-        </KeyboardControls>
-        <MemoizedFloor />
-        {/* <MemoizedCubes />
+    <>
+      <EcctrlJoystick />
+      <Canvas shadows camera={{ position: [10, 10, 10], fov: 50 }}>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+        <Physics>
+          <KeyboardControls map={keyboardMap}>
+            <Suspense fallback={<></>}>
+              <Ecctrl animated ref={ref}>
+                <EcctrlAnimation
+                  characterURL={"./assets/avatars/Animations.glb"}
+                  animationSet={animationSet}
+                >
+                  <MemoizedHandleRotAndPos refE={ref} />
+                  <MemoizedCharacter />
+                </EcctrlAnimation>
+              </Ecctrl>
+            </Suspense>
+          </KeyboardControls>
+          <MemoizedFloor />
+          {/* <MemoizedCubes />
           <MovingCube /> */}
-      </Physics>
-      <OrbitControls />
-      <Avatar />
-    </Canvas>
+        </Physics>
+        <MemoizedCharacter position={[0, 0, 0]} />
+        <OrbitControls />
+      </Canvas>
+    </>
   );
 };
 
 useGLTF.preload("./assets/avatars/Animations.glb");
 export default App;
 
-const UPDATE_SOCKET_INTERVAL = 1500; // ms
-
+const UPDATE_SOCKET_INTERVAL = 500; // ms
 
 const HandleRotAndPos = ({ refE }) => {
   const [playerState, setPlayerState] = useAtom(playerStateAtom);

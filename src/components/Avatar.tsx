@@ -18,7 +18,11 @@ const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
   const clone = SkeletonUtils.clone(scene);
 
   return (
-    <group ref={groupRef} {...props}>
+    <group
+      ref={groupRef}
+      {...props}
+      position={props.position ? props.position : [0, -0.96, 0]}
+    >
       <primitive object={clone} ref={avatarRef} />
     </group>
   );
