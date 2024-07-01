@@ -65,10 +65,9 @@ const App: React.FC = () => {
                 characterURL={"./assets/avatars/Animations.glb"}
                 animationSet={animationSet}
               >
-                {/* <MemoizedHandleRotAndPos refE={ref} /> */}
-                <MemoizedCharacter position={[0, -0.65, 0]} />
+                <MemoizedHandleRotAndPos refE={ref} />
+                <MemoizedCharacter />
               </EcctrlAnimation>
-              |
             </Ecctrl>
           </Suspense>
         </KeyboardControls>
@@ -84,7 +83,7 @@ const App: React.FC = () => {
 useGLTF.preload("./assets/avatars/Animations.glb");
 export default App;
 
-const UPDATE_SOCKET_INTERVAL = 500; // ms
+const UPDATE_SOCKET_INTERVAL = 1500; // ms
 
 const HandleRotAndPos = ({ refE }) => {
   const [playerState, setPlayerState] = useAtom(playerStateAtom);

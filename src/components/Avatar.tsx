@@ -11,11 +11,11 @@ const avatarModels = {
 };
 
 const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
+  console.log("render Avatar");
   const groupRef = useRef<THREE.Group>(null);
   const avatarRef = useRef(null);
   const { scene } = useGLTF(avatarModels["male_04"]);
   const clone = SkeletonUtils.clone(scene);
-  useGLTF("./assets/avatars/Animations.glb");
 
   return (
     <group ref={groupRef} {...props}>
