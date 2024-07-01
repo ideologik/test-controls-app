@@ -86,6 +86,7 @@ export default App;
 
 const UPDATE_SOCKET_INTERVAL = 1500; // ms
 
+
 const HandleRotAndPos = ({ refE }) => {
   const [playerState, setPlayerState] = useAtom(playerStateAtom);
   const [previousPosition, setPreviousPosition] = useState(
@@ -96,13 +97,13 @@ const HandleRotAndPos = ({ refE }) => {
   );
   const [lastUpdateTime, setLastUpdateTime] = useState(0);
 
-  const roundValue = useCallback((value: number, precision: number) => {
+  const roundValue = useCallback((value, precision) => {
     const factor = Math.pow(10, precision);
     return Math.round(value * factor) / factor;
   }, []);
 
   const roundPosition = useCallback(
-    (position, precision: number) => ({
+    (position, precision) => ({
       x: roundValue(position.x, precision),
       y: roundValue(position.y, precision),
       z: roundValue(position.z, precision),
@@ -111,7 +112,7 @@ const HandleRotAndPos = ({ refE }) => {
   );
 
   const roundRotation = useCallback(
-    (rotation, precision: number) => ({
+    (rotation, precision) => ({
       x: roundValue(rotation.x, precision),
       y: roundValue(rotation.y, precision),
       z: roundValue(rotation.z, precision),
