@@ -1,7 +1,9 @@
-import React, { useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import React, { useEffect, useRef } from "react";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
+import { currentAnimationAtom } from "../../playerStateStore";
+import { useAtom } from "jotai";
 
 const avatarModels = {
   male_04: "./assets/avatars/SK_Custom_male_04.glb",
@@ -18,6 +20,23 @@ const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
 
   const { scene } = useGLTF(avatarModels["male_04"]);
   const clone = SkeletonUtils.clone(scene);
+
+  const { animations } = useGLTF("./assets/avatars/Animations.glb");
+  const { actions, names } = useAnimations(animations, avatarRef);
+
+  const [currentAnimation] = useAtom(currentAnimationAtom);
+
+  useEffect(() => {
+    if (currentAnimation && actions && actions[currentAnimation]) {
+      console.log("entre al useEffect", actions[currentAnimation]);
+      const action = actions[currentAnimation]?.reset().fadeIn(0.5).play();
+      return () => {
+        if (actions["Idle"]) {
+          action?.fadeOut(0.5);
+        }
+      };
+    }
+  }, [actions, currentAnimation, names]);
 
   return (
     <group
