@@ -6,6 +6,7 @@ import { EcctrlJoystick } from "ecctrl";
 import Floor from "./components/Floor";
 import Cubes from "./components/Cubes";
 import AvatarPlayer from "./components/Avatars/AvatarPlayer/AvatarPlayer";
+import AvatarRemote from "./components/Avatars/AvatarRemote/AvatarRemote";
 
 // Memoizing the components to avoid unnecessary re-renders
 const MemoizedFloor = React.memo(Floor);
@@ -23,8 +24,9 @@ const App: React.FC = () => {
         <Physics>
           <MemoizedFloor />
           <Cubes />
-          <AvatarPlayer position={[0, 0.5, 0]} scale={[3, 3, 3]} />
+          <AvatarPlayer />
         </Physics>
+        <AvatarRemote />
         <OrbitControls />
         <Stats />
       </Canvas>

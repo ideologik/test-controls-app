@@ -28,7 +28,7 @@ const animationSet = {
   fall: "Jumping",
 };
 
-const ApatarPlayer: React.FC<JSX.IntrinsicElements["group"]> = ({
+const AvatarPlayer: React.FC<JSX.IntrinsicElements["group"]> = ({
   ...props
 }) => {
   const rigidBodyRef = useRef<RapierRigidBody | null>(null);
@@ -66,4 +66,4 @@ const ApatarPlayer: React.FC<JSX.IntrinsicElements["group"]> = ({
   );
 };
 
-export default ApatarPlayer;
+export default AvatarPlayer;
