@@ -13,7 +13,11 @@ const avatarModels = {
   robot: "./assets/avatars/jaxa_iss_int-ball.glb",
 };
 
-const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
+type AvatarProps = JSX.IntrinsicElements["group"] & {
+  animationUrl?: string | null;
+};
+
+const Avatar: React.FC<AvatarProps> = ({ animationUrl = null, ...props }) => {
   console.log("render Avatar");
   const groupRef = useRef<THREE.Group>(null);
   const avatarRef = useRef<THREE.Group>(null);
@@ -21,13 +25,19 @@ const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
   const { scene } = useGLTF(avatarModels["male_04"]);
   const clone = SkeletonUtils.clone(scene);
 
-  const { animations } = useGLTF("./assets/avatars/Animations.glb");
+  const animationGLTF = useGLTF(animationUrl || avatarModels["male_04"]);
+  const animations = animationUrl ? animationGLTF.animations : [];
   const { actions, names } = useAnimations(animations, avatarRef);
 
   const [currentAnimation] = useAtom(currentAnimationAtom);
 
   useEffect(() => {
-    if (currentAnimation && actions && actions[currentAnimation]) {
+    if (
+      animationUrl &&
+      currentAnimation &&
+      actions &&
+      actions[currentAnimation]
+    ) {
       console.log("entre al useEffect", actions[currentAnimation]);
       const action = actions[currentAnimation]?.reset().fadeIn(0.5).play();
       return () => {
@@ -36,7 +46,7 @@ const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
         }
       };
     }
-  }, [actions, currentAnimation, names]);
+  }, [animationUrl, actions, currentAnimation, names]);
 
   return (
     <group

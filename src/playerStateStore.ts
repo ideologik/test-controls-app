@@ -11,4 +11,4 @@ export const playerStateAtom = atom<IAvatarState>({
 
 export const currentAnimationAtom = atom<
   "Idle" | "Walking" | "Running" | "Jumping"
->("Idle");
+>("Walking");
