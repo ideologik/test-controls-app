@@ -8,19 +8,16 @@ const avatarModels = {
   male_13: "./assets/avatars/SK_Custom_male_13.glb",
   female_07: "./assets/avatars/SK_Custom_female_07.glb",
   female_09: "./assets/avatars/SK_Custom_female_09.glb",
+  robot: "./assets/avatars/jaxa_iss_int-ball.glb",
 };
 
 const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
   console.log("render Avatar");
   const groupRef = useRef<THREE.Group>(null);
-  const avatarRef = useRef(null);
-  const { scene, materials } = useGLTF(avatarModels["male_04"]);
-  const clone = SkeletonUtils.clone(scene);
+  const avatarRef = useRef<THREE.Group>(null);
 
-  for (const material in materials) {
-    materials[material].metalness = -2;
-    materials[material].roughness = 1;
-  }
+  const { scene } = useGLTF(avatarModels["male_04"]);
+  const clone = SkeletonUtils.clone(scene);
 
   return (
     <group
@@ -32,5 +29,4 @@ const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
     </group>
   );
 };
-
 export default Avatar;
