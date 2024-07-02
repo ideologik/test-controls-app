@@ -6,7 +6,12 @@ import React, {
   Suspense,
 } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { KeyboardControls, OrbitControls, useGLTF } from "@react-three/drei";
+import {
+  KeyboardControls,
+  OrbitControls,
+  Stats,
+  useGLTF,
+} from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import Ecctrl, { EcctrlAnimation, EcctrlJoystick } from "ecctrl";
 import Floor from "./components/Floor";
@@ -82,6 +87,7 @@ const App: React.FC = () => {
         </Physics>
         <MemoizedCharacter position={[0, 0, 0]} />
         <OrbitControls />
+        <Stats />
       </Canvas>
     </>
   );
@@ -90,7 +96,7 @@ const App: React.FC = () => {
 useGLTF.preload("./assets/avatars/Animations.glb");
 export default App;
 
-const UPDATE_SOCKET_INTERVAL = 700; // ms
+const UPDATE_SOCKET_INTERVAL = 750; // ms
 
 const HandleRotAndPos = ({ refE }) => {
   const [playerState, setPlayerState] = useAtom(playerStateAtom);

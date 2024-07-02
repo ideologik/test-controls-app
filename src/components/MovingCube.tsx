@@ -1,57 +1,62 @@
-import React, { useRef } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useAtom } from "jotai";
 import { playerStateAtom } from "../playerStateStore";
 import * as THREE from "three";
+import Avatar from "./Avatar";
 
-const MovingCube: React.FC = () => {
+const MovingCube: FC = () => {
   const [playerState] = useAtom(playerStateAtom);
-  const cubeRef = useRef<THREE.Mesh>(null);
 
-  useFrame(() => {
-    if (cubeRef.current) {
-      // Obtener la posición y rotación actuales del cubo
-      const currentPos = cubeRef.current.position;
-      const currentRot = cubeRef.current.quaternion;
+  const [currentPos, setCurrentPos] = useState(new THREE.Vector3());
+  const [currentQuat, setCurrentQuat] = useState(new THREE.Quaternion());
 
-      // Crear las posiciones y rotaciones objetivo basadas en el estado del jugador
-      const targetPos = new THREE.Vector3(
-        playerState.position.x + 1.5, // Ajusta esto según sea necesario
-        playerState.position.y,
-        playerState.position.z + 1.5 // Ajusta esto según sea necesario
-      );
+  const [targetPos, setTargetPos] = useState(new THREE.Vector3());
+  const [targetQuat, setTargetQuat] = useState(new THREE.Quaternion());
 
-      const targetRot = new THREE.Quaternion(
-        playerState.rotation.x,
-        playerState.rotation.y,
-        playerState.rotation.z,
-        playerState.rotation.w
-      );
+  useEffect(() => {
+    const newPos = new THREE.Vector3(
+      playerState.position.x,
+      playerState.position.y,
+      playerState.position.z
+    );
 
-      // Interpolar la posición y rotación
-      currentPos.lerp(targetPos, 0.1);
-      cubeRef.current.position.set(currentPos.x, currentPos.y, currentPos.z);
+    const newQuat = new THREE.Quaternion(
+      playerState.rotation.x,
+      playerState.rotation.y,
+      playerState.rotation.z,
+      playerState.rotation.w
+    );
 
-      currentRot.slerp(targetRot, 0.1);
-      cubeRef.current.quaternion.set(
-        currentRot.x,
-        currentRot.y,
-        currentRot.z,
-        currentRot.w
-      );
+    // Verificar si la posición o la rotación han cambiado
+    if (!newPos.equals(targetPos) || !newQuat.equals(targetQuat)) {
+      setTargetPos(newPos);
+      setTargetQuat(newQuat);
     }
+  }, [playerState.position, playerState.rotation]);
+
+  useFrame((state, delta) => {
+    // Interpolar la posición
+    const newPos = currentPos.clone().lerp(targetPos, delta * 1); // Ajuste del factor para suavizar el movimiento
+    setCurrentPos(newPos);
+
+    // Interpolar la rotación
+    const newQuat = new THREE.Quaternion().slerpQuaternions(
+      currentQuat,
+      targetQuat,
+      delta * 1
+    ); // Ajuste del factor para suavizar el movimiento
+    setCurrentQuat(newQuat);
   });
 
+  // Convertir el cuaternión actual a ángulos de Euler para pasarlo al Avatar
+  const currentEuler = new THREE.Euler().setFromQuaternion(currentQuat);
   return (
-    <mesh ref={cubeRef} position={[0, 0, 0]}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="red" />
-      <mesh position={[0, 0.55, 0.45]}>
-        <boxGeometry args={[0.1, 0.1, 0.1]} />
-        <meshStandardMaterial color="blue" />
-      </mesh>
-    </mesh>
+    <Avatar
+      position={[currentPos.x + 1.5, currentPos.y - 0.9, currentPos.z]}
+      rotation={[currentEuler.x, currentEuler.y, currentEuler.z]} // Pasar la rotación como ángulos de Euler
+    />
   );
 };
 
-export default React.memo(MovingCube);
+export default memo(MovingCube);
