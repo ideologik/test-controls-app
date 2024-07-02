@@ -90,7 +90,7 @@ const App: React.FC = () => {
 useGLTF.preload("./assets/avatars/Animations.glb");
 export default App;
 
-const UPDATE_SOCKET_INTERVAL = 500; // ms
+const UPDATE_SOCKET_INTERVAL = 700; // ms
 
 const HandleRotAndPos = ({ refE }) => {
   const [playerState, setPlayerState] = useAtom(playerStateAtom);

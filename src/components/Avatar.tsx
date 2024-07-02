@@ -14,8 +14,13 @@ const Avatar: React.FC<JSX.IntrinsicElements["group"]> = ({ ...props }) => {
   console.log("render Avatar");
   const groupRef = useRef<THREE.Group>(null);
   const avatarRef = useRef(null);
-  const { scene } = useGLTF(avatarModels["male_04"]);
+  const { scene, materials } = useGLTF(avatarModels["male_04"]);
   const clone = SkeletonUtils.clone(scene);
+
+  for (const material in materials) {
+    materials[material].metalness = -2;
+    materials[material].roughness = 1;
+  }
 
   return (
     <group
