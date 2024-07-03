@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { cloneDeep } from "lodash";
 import * as THREE from "three";
@@ -11,9 +11,15 @@ type AnimationEvent = {
 };
 
 const useRemoteAnimations = (avatarRef: React.RefObject<THREE.Group>) => {
-  const { animations } = useGLTF("./assets/avatars/Animations.glb");
-  const cloneAnimations = cloneDeep(animations);
-  const { actions, names, mixer } = useAnimations(cloneAnimations, avatarRef);
+  const [cloneAnimation, setAnimation] = useState<any[]>([]);
+
+  useEffect(() => {
+    const { animations } = useGLTF("./assets/avatars/Animations.glb");
+    const cloneAnimations = cloneDeep(animations);
+    setAnimation(cloneAnimations);
+  }, []);
+
+  const { actions, mixer } = useAnimations(cloneAnimation, avatarRef);
   const animation = usePlayerStore((state) => state.animation);
   const prevAnimation = useRef<string | null>(null);
 
@@ -45,7 +51,7 @@ const useRemoteAnimations = (avatarRef: React.RefObject<THREE.Group>) => {
         mixer.removeEventListener("finished", onAnimationFinished);
       };
     }
-  }, [animation, actions, names, mixer]);
+  }, [animation, actions, mixer]);
 };
 
 export default useRemoteAnimations;

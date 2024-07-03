@@ -4,6 +4,7 @@ import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import usePlayerStore from "../../../stores/usePlayerStore";
+import useRemoteAnimations from "./useRemoteAnimations";
 //import useRemoteAnimations from "./useRemoteAnimations";
 
 type AvatarRemoteProps = JSX.IntrinsicElements["group"] & {
@@ -24,7 +25,7 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
   const lerpPosition = useRef(new THREE.Vector3());
   const slerpRotation = useRef(new THREE.Quaternion());
 
-  //useRemoteAnimations(avatarRef);
+  useRemoteAnimations(avatarRef);
 
   useFrame((_, delta) => {
     if (groupRef.current && avatarRef.current && position && rotation) {

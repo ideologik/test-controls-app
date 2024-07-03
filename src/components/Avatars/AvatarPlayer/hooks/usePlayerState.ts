@@ -18,16 +18,20 @@ const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
 
   console.log("usePlayerState render");
 
+  const animation = usePlayerStore((state) => state.animation);
   const roundValue = useCallback((value: number, precision: number): number => {
     const factor = Math.pow(10, precision);
     return Math.round(value * factor) / factor;
   }, []);
 
   const curAnimation = useGame((state) => state.curAnimation);
-  console.log("animation", curAnimation);
-  setAnimation(curAnimation as IAvatarAnimation);
 
   useFrame(() => {
+
+    if (curAnimation !== animation) {
+      setAnimation(curAnimation as IAvatarAnimation);
+    }
+    
     if (rigidBodyRef.current) {
       // Calcular la posición y rotación actuales
       const currentPosition = new THREE.Vector3(
@@ -45,13 +49,11 @@ const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
 
       // Comparar y actualizar solo si hay cambios significativos
       if (!currentPosition.equals(lastPositionRef.current)) {
-        console.log("Changing position", currentPosition);
         setPosition(currentPosition);
         lastPositionRef.current.copy(currentPosition);
       }
 
       if (!currentRotation.equals(lastRotationRef.current)) {
-        console.log("Changing rotation", currentRotation);
         setRotation(currentRotation);
         lastRotationRef.current.copy(currentRotation);
       }
