@@ -1,15 +1,14 @@
 import { KeyboardControls } from "@react-three/drei";
 import Ecctrl, { EcctrlAnimation } from "ecctrl";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Suspense } from "react";
-import Avatar from "../Avatar";
 import { RapierRigidBody } from "@react-three/rapier";
 import { playerStateAtom } from "../../../playerStateStore";
 import { useAtom } from "jotai";
 import { isEqual } from "lodash";
-import AvatarPlayerMovements from "./AvatarPlayerMovements";
+import AvatarPlayerBase from "./AvatarPlayerBase";
+//import AvatarPlayerMovements from "./AvatarPlayerMovements";
 
-const MemoizedCharacter = React.memo(Avatar);
+const MemoizedAvatarPlayerBase = React.memo(AvatarPlayerBase);
 
 const keyboardMap = [
   { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -27,10 +26,12 @@ const animationSet = {
   jumpLand: "Jumping",
   fall: "Jumping",
 };
+type AvatarPlayerProps = JSX.IntrinsicElements["group"] & {
+  modelUrl: string;
+};
 
-const AvatarPlayer: React.FC<JSX.IntrinsicElements["group"]> = ({
-  ...props
-}) => {
+const AvatarPlayer: React.FC<AvatarPlayerProps> = ({ modelUrl, ...props }) => {
+  console.log("render AvatarPlayer");
   const rigidBodyRef = useRef<RapierRigidBody | null>(null);
   const [playerState] = useAtom(playerStateAtom);
 
@@ -46,22 +47,20 @@ const AvatarPlayer: React.FC<JSX.IntrinsicElements["group"]> = ({
   }, [playerState]);
 
   useEffect(() => {
-    handlePlayerStateChange();
+    //handlePlayerStateChange();
   }, [handlePlayerStateChange]);
 
   return (
     <KeyboardControls map={keyboardMap}>
-      <Suspense fallback={null}>
-        <Ecctrl animated ref={rigidBodyRef}>
-          <EcctrlAnimation
-            characterURL={"./assets/avatars/Animations.glb"}
-            animationSet={animationSet}
-          >
-            <AvatarPlayerMovements rigidBodyRef={rigidBodyRef} />
-            <MemoizedCharacter {...props} />
-          </EcctrlAnimation>
-        </Ecctrl>
-      </Suspense>
+      <Ecctrl animated ref={rigidBodyRef}>
+        <EcctrlAnimation
+          characterURL={"./assets/avatars/Animations.glb"}
+          animationSet={animationSet}
+        >
+          <MemoizedAvatarPlayerBase {...props} modelUrl={modelUrl} />
+        </EcctrlAnimation>
+      </Ecctrl>
+      {/* <AvatarPlayerMovements rigidBodyRef={rigidBodyRef} /> */}
     </KeyboardControls>
   );
 };

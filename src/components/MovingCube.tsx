@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useAtom } from "jotai";
 import { playerStateAtom } from "../playerStateStore";
 import * as THREE from "three";
-import Avatar from "./Avatars/Avatar";
+import Avatar from "./Avatars/AvatarRemote/AvatarRemoteBase";
 
 const MovingCube: FC = () => {
   const [playerState] = useAtom(playerStateAtom);

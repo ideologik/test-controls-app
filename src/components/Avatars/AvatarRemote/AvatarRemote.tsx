@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
 import { playerStateAtom } from "../../../playerStateStore";
-import Avatar from "../Avatar";
+import Avatar from "./AvatarRemoteBase";
 
 const AvatarRemote: React.FC<JSX.IntrinsicElements["group"]> = ({
   ...props
