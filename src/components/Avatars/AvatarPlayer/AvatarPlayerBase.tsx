@@ -6,13 +6,13 @@ type AvatarProps = JSX.IntrinsicElements["group"] & {
   modelUrl: string;
 };
 
-const AvatarPlayerBase: React.FC<AvatarProps> = ({ modelUrl, ...props }) => {
+const AvatarPlayerBase: React.FC<AvatarProps> = ({ modelUrl }) => {
   console.log("render AvatarPlayerBase");
 
   const { scene: avatarScene } = useGLTF(modelUrl);
   const avatarClone = SkeletonUtils.clone(avatarScene);
 
-  return <primitive object={avatarClone} {...props} position={[0, -0.96, 0]} />;
+  return <primitive object={avatarClone} position={[0, -0.96, 0]} />;
 };
 
 export default AvatarPlayerBase;

@@ -1,17 +1,18 @@
+// usePlayerState Hook
 import { useFrame } from "@react-three/fiber";
 import { RapierRigidBody } from "@react-three/rapier";
-import { useState, useCallback } from "react";
+import { useCallback, useRef } from "react";
 import * as THREE from "three";
 import usePlayerStore from "../../../../stores/usePlayerStore";
 
-const UPDATE_SOCKET_INTERVAL = 750; // ms
-
 const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
-  const position = usePlayerStore((state) => state.position);
   const setPosition = usePlayerStore((state) => state.setPosition);
-  const rotation = usePlayerStore((state) => state.rotation);
   const setRotation = usePlayerStore((state) => state.setRotation);
-  const [lastUpdateTime, setLastUpdateTime] = useState(0);
+
+  const lastPositionRef = useRef<THREE.Vector3>(new THREE.Vector3());
+  const lastRotationRef = useRef<THREE.Quaternion>(new THREE.Quaternion());
+
+  console.log("usePlayerState render");
 
   const roundValue = useCallback((value: number, precision: number): number => {
     const factor = Math.pow(10, precision);
@@ -19,11 +20,7 @@ const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
   }, []);
 
   useFrame(() => {
-    const now = Date.now();
-    if (
-      now - lastUpdateTime >= UPDATE_SOCKET_INTERVAL &&
-      rigidBodyRef.current
-    ) {
+    if (rigidBodyRef.current) {
       // Calcular la posición y rotación actuales
       const currentPosition = new THREE.Vector3(
         roundValue(rigidBodyRef.current.translation().x, 2),
@@ -38,18 +35,18 @@ const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
         roundValue(rigidBodyRef.current.rotation().w, 2)
       );
 
-      // Comparar y actualizar solo si hay cambios
-      if (!currentPosition.equals(position)) {
-        console.log("entro a cambiar posicion");
+      // Comparar y actualizar solo si hay cambios significativos
+      if (!currentPosition.equals(lastPositionRef.current)) {
+        console.log("Changing position", currentPosition);
         setPosition(currentPosition);
+        lastPositionRef.current.copy(currentPosition);
       }
 
-      if (!currentRotation.equals(rotation)) {
-        console.log("entro a cambiar rotacion");
+      if (!currentRotation.equals(lastRotationRef.current)) {
+        console.log("Changing rotation", currentRotation);
         setRotation(currentRotation);
+        lastRotationRef.current.copy(currentRotation);
       }
-
-      setLastUpdateTime(now);
     }
   });
 };
