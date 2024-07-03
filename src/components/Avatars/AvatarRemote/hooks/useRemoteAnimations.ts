@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { cloneDeep } from "lodash";
 import * as THREE from "three";
-import usePlayerStore from "../../../stores/usePlayerStore";
+import usePlayerStore from "../../../../stores/usePlayerStore";
 
 // Definimos el tipo del evento
 type AnimationEvent = {
