@@ -1,60 +1,51 @@
+import React, { useRef } from "react";
+import { useGLTF } from "@react-three/drei";
+import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { useState, useEffect } from "react";
-
-import Avatar from "./AvatarRemoteBase";
 import usePlayerStore from "../../../stores/usePlayerStore";
+//import useRemoteAnimations from "./useRemoteAnimations";
 
-const AvatarRemote: React.FC<JSX.IntrinsicElements["group"]> = ({
-  ...props
-}) => {
+type AvatarRemoteProps = JSX.IntrinsicElements["group"] & {
+  modelUrl: string;
+};
+
+const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
+  console.log("render Avatar");
+  const avatarRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>(null);
+
+  const { scene: avatarScene } = useGLTF(modelUrl);
+  const avatarClone = SkeletonUtils.clone(avatarScene);
+
   const position = usePlayerStore((state) => state.position);
   const rotation = usePlayerStore((state) => state.rotation);
 
-  const [currentPos, setCurrentPos] = useState(new THREE.Vector3());
-  const [currentQuat, setCurrentQuat] = useState(new THREE.Quaternion());
+  const lerpPosition = useRef(new THREE.Vector3());
+  const slerpRotation = useRef(new THREE.Quaternion());
 
-  const [targetPos, setTargetPos] = useState(new THREE.Vector3());
-  const [targetQuat, setTargetQuat] = useState(new THREE.Quaternion());
-
-  useEffect(() => {
-    const newPos = new THREE.Vector3(position.x, position.y, position.z);
-    const newQuat = new THREE.Quaternion(
-      rotation.x,
-      rotation.y,
-      rotation.z,
-      rotation.w
-    );
-
-    // Verificar si la posición o la rotación han cambiado
-    if (!newPos.equals(targetPos) || !newQuat.equals(targetQuat)) {
-      setTargetPos(newPos);
-      setTargetQuat(newQuat);
-    }
-  }, [position, rotation, targetPos, targetQuat]);
+  //useRemoteAnimations(avatarRef);
 
   useFrame((_, delta) => {
-    // Interpolar la posición
-    const newPos = currentPos.clone().lerp(targetPos, delta * 1); // Ajuste del factor para suavizar el movimiento
-    setCurrentPos(newPos);
+    if (groupRef.current && avatarRef.current && position && rotation) {
+      // Interpolación suave para la posición
+      lerpPosition.current.lerp(position, delta * 5); // Ajusta el factor de interpolación según sea necesario
+      groupRef.current.position.copy(lerpPosition.current);
 
-    // Interpolar la rotación
-    const newQuat = new THREE.Quaternion().slerpQuaternions(
-      currentQuat,
-      targetQuat,
-      delta * 1
-    ); // Ajuste del factor para suavizar el movimiento
-    setCurrentQuat(newQuat);
+      // Interpolación suave para la rotación
+      slerpRotation.current.slerpQuaternions(
+        groupRef.current.quaternion,
+        rotation,
+        delta * 5
+      ); // Ajusta el factor de interpolación según sea necesario
+      groupRef.current.quaternion.copy(slerpRotation.current);
+    }
   });
 
-  // Convertir el cuaternión actual a ángulos de Euler para pasarlo al Avatar
-  const currentEuler = new THREE.Euler().setFromQuaternion(currentQuat);
   return (
-    <Avatar
-      {...props}
-      position={[currentPos.x + 1.5, currentPos.y - 0.9, currentPos.z]}
-      rotation={[currentEuler.x, currentEuler.y, currentEuler.z]} // Pasar la rotación como ángulos de Euler
-    />
+    <group ref={groupRef} {...props}>
+      <primitive object={avatarClone} ref={avatarRef} />
+    </group>
   );
 };
 

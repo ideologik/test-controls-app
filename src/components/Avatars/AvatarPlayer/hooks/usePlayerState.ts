@@ -3,11 +3,15 @@ import { useFrame } from "@react-three/fiber";
 import { RapierRigidBody } from "@react-three/rapier";
 import { useCallback, useRef } from "react";
 import * as THREE from "three";
-import usePlayerStore from "../../../../stores/usePlayerStore";
+import usePlayerStore, {
+  IAvatarAnimation,
+} from "../../../../stores/usePlayerStore";
+import { useGame } from "ecctrl";
 
 const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
   const setPosition = usePlayerStore((state) => state.setPosition);
   const setRotation = usePlayerStore((state) => state.setRotation);
+  const setAnimation = usePlayerStore((state) => state.setAnimation);
 
   const lastPositionRef = useRef<THREE.Vector3>(new THREE.Vector3());
   const lastRotationRef = useRef<THREE.Quaternion>(new THREE.Quaternion());
@@ -18,6 +22,10 @@ const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
     const factor = Math.pow(10, precision);
     return Math.round(value * factor) / factor;
   }, []);
+
+  const curAnimation = useGame((state) => state.curAnimation);
+  console.log("animation", curAnimation);
+  setAnimation(curAnimation as IAvatarAnimation);
 
   useFrame(() => {
     if (rigidBodyRef.current) {
