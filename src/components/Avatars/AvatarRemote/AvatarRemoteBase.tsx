@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
-import { currentAnimationAtom } from "../../../playerStateStore";
-import { useAtom } from "jotai";
+import usePlayerStore from "../../../stores/usePlayerStore";
 
 const avatarModels = {
   male_04: "./assets/avatars/SK_Custom_male_04.glb",
@@ -21,7 +20,7 @@ const AvatarRemoteBase: React.FC<AvatarProps> = ({
   animationUrl = null,
   ...props
 }) => {
-  console.log("render Avatar");
+  console.log("render AvatarRemoteBase");
   const groupRef = useRef<THREE.Group>(null);
   const avatarRef = useRef<THREE.Group>(null);
 
@@ -36,7 +35,7 @@ const AvatarRemoteBase: React.FC<AvatarProps> = ({
 
   const { actions, names } = useAnimations(animations, avatarRef);
 
-  const [currentAnimation] = useAtom(currentAnimationAtom);
+  const currentAnimation = usePlayerStore((state) => state.animation);
 
   useEffect(() => {
     if (

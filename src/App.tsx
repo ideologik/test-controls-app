@@ -7,11 +7,13 @@ import Floor from "./components/Floor";
 import Cubes from "./components/Cubes";
 import Avatar from "./components/Avatars/Avatar";
 import AvatarPlayer from "./components/Avatars/AvatarPlayer/AvatarPlayer";
+// import AvatarRemote from "./components/Avatars/AvatarRemote/AvatarRemote";
 
 // Memoizing the components to avoid unnecessary re-renders
 const MemoizedFloor = React.memo(Floor);
 const MemoizedAvatarPlayer = React.memo(AvatarPlayer);
 const MemoizedAvatar = React.memo(Avatar);
+// const MemoizedAvatarRemote = React.memo(AvatarRemote);
 
 const models = {
   animations: "./assets/avatars/Animations.glb",
@@ -38,6 +40,7 @@ const App: React.FC = () => {
           <Cubes />
           <MemoizedAvatarPlayer modelUrl={models.male_04} />
         </Physics>
+        {/* <MemoizedAvatarRemote position={[0, 0, 0]} /> */}
         <MemoizedAvatar
           position={[1.5, 0, 0]}
           modelUrl={models.male_13}

@@ -1,14 +1,15 @@
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
-import { playerStateAtom } from "../../../playerStateStore";
+
 import Avatar from "./AvatarRemoteBase";
+import usePlayerStore from "../../../stores/usePlayerStore";
 
 const AvatarRemote: React.FC<JSX.IntrinsicElements["group"]> = ({
   ...props
 }) => {
-  const [playerState] = useAtom(playerStateAtom);
+  const position = usePlayerStore((state) => state.position);
+  const rotation = usePlayerStore((state) => state.rotation);
 
   const [currentPos, setCurrentPos] = useState(new THREE.Vector3());
   const [currentQuat, setCurrentQuat] = useState(new THREE.Quaternion());
@@ -17,17 +18,12 @@ const AvatarRemote: React.FC<JSX.IntrinsicElements["group"]> = ({
   const [targetQuat, setTargetQuat] = useState(new THREE.Quaternion());
 
   useEffect(() => {
-    const newPos = new THREE.Vector3(
-      playerState.position.x,
-      playerState.position.y,
-      playerState.position.z
-    );
-
+    const newPos = new THREE.Vector3(position.x, position.y, position.z);
     const newQuat = new THREE.Quaternion(
-      playerState.rotation.x,
-      playerState.rotation.y,
-      playerState.rotation.z,
-      playerState.rotation.w
+      rotation.x,
+      rotation.y,
+      rotation.z,
+      rotation.w
     );
 
     // Verificar si la posición o la rotación han cambiado
@@ -35,7 +31,7 @@ const AvatarRemote: React.FC<JSX.IntrinsicElements["group"]> = ({
       setTargetPos(newPos);
       setTargetQuat(newQuat);
     }
-  }, [playerState.position, playerState.rotation, targetPos, targetQuat]);
+  }, [position, rotation, targetPos, targetQuat]);
 
   useFrame((_, delta) => {
     // Interpolar la posición

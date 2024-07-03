@@ -1,12 +1,9 @@
 import { KeyboardControls } from "@react-three/drei";
 import Ecctrl, { EcctrlAnimation } from "ecctrl";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { RapierRigidBody } from "@react-three/rapier";
-import { playerStateAtom } from "../../../playerStateStore";
-import { useAtom } from "jotai";
-import { isEqual } from "lodash";
 import AvatarPlayerBase from "./AvatarPlayerBase";
-//import AvatarPlayerMovements from "./AvatarPlayerMovements";
+import usePlayerState from "./hooks/usePlayerState";
 
 const MemoizedAvatarPlayerBase = React.memo(AvatarPlayerBase);
 
@@ -26,6 +23,7 @@ const animationSet = {
   jumpLand: "Jumping",
   fall: "Jumping",
 };
+
 type AvatarPlayerProps = JSX.IntrinsicElements["group"] & {
   modelUrl: string;
 };
@@ -33,22 +31,7 @@ type AvatarPlayerProps = JSX.IntrinsicElements["group"] & {
 const AvatarPlayer: React.FC<AvatarPlayerProps> = ({ modelUrl, ...props }) => {
   console.log("render AvatarPlayer");
   const rigidBodyRef = useRef<RapierRigidBody | null>(null);
-  const [playerState] = useAtom(playerStateAtom);
-
-  const previousRotation = useRef(playerState.rotation);
-
-  // Memorizar el effect con callback
-  const handlePlayerStateChange = useCallback(() => {
-    if (!isEqual(playerState.rotation, previousRotation.current)) {
-      previousRotation.current = playerState.rotation;
-      console.log("posicion", playerState.position);
-      console.log("rotacion", playerState.rotation);
-    }
-  }, [playerState]);
-
-  useEffect(() => {
-    //handlePlayerStateChange();
-  }, [handlePlayerStateChange]);
+  usePlayerState(rigidBodyRef);
 
   return (
     <KeyboardControls map={keyboardMap}>
@@ -60,7 +43,6 @@ const AvatarPlayer: React.FC<AvatarPlayerProps> = ({ modelUrl, ...props }) => {
           <MemoizedAvatarPlayerBase {...props} modelUrl={modelUrl} />
         </EcctrlAnimation>
       </Ecctrl>
-      {/* <AvatarPlayerMovements rigidBodyRef={rigidBodyRef} /> */}
     </KeyboardControls>
   );
 };
