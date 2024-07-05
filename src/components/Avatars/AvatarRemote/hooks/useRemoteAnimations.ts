@@ -1,57 +1,51 @@
-import { useRef, useEffect, useState } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
-import { cloneDeep } from "lodash";
+import { useEffect } from "react";
+import { useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import usePlayerStore from "../../../../stores/usePlayerStore";
 
-// Definimos el tipo del evento
-type AnimationEvent = {
-  type: string;
-  action: THREE.AnimationAction;
-};
-
-const useRemoteAnimations = (avatarRef: React.RefObject<THREE.Group>) => {
-  const [cloneAnimation, setAnimation] = useState<any[]>([]);
-
-  useEffect(() => {
-    const { animations } = useGLTF("./assets/avatars/Animations.glb");
-    const cloneAnimations = cloneDeep(animations);
-    setAnimation(cloneAnimations);
-  }, []);
-
-  const { actions, mixer } = useAnimations(cloneAnimation, avatarRef);
+const useRemoteAnimations = (
+  avatarRef: React.RefObject<any>,
+  animations: THREE.AnimationClip[]
+) => {
+  console.log("avatarRef", avatarRef);
+  const { actions, names } = useAnimations(animations, avatarRef);
   const animation = usePlayerStore((state) => state.animation);
-  const prevAnimation = useRef<string | null>(null);
 
   useEffect(() => {
-    if (
-      animation &&
-      actions &&
-      actions[animation] &&
-      prevAnimation.current !== animation
-    ) {
-      console.log("entre al useEffect", animation);
-      const action = actions[animation]?.reset().fadeIn(0.5).play();
-      prevAnimation.current = animation;
-
-      action.clampWhenFinished = true;
-      action.loop = THREE.LoopOnce;
-
-      // Listener para el evento de terminación de la animación
-      const onAnimationFinished = (event: AnimationEvent) => {
-        if (event.action === action && actions["Idle"]) {
-          actions["Idle"]?.fadeIn(0.5).play();
-          prevAnimation.current = "Idle";
+    if (avatarRef && animation && actions && actions["Jump"]) {
+      console.log("entre al useEffect animation", animation);
+      const action = actions["Jump"]?.reset().fadeIn(0.5).play();
+      return () => {
+        if (actions["Idle"]) {
+          action?.fadeOut(0.5);
         }
       };
-
-      mixer.addEventListener("finished", onAnimationFinished);
-
-      return () => {
-        mixer.removeEventListener("finished", onAnimationFinished);
-      };
     }
-  }, [animation, actions, mixer]);
+  }, [animation, actions, names, avatarRef]);
+
+  // useEffect(() => {
+  //   console.log(animation);
+  //   let anim = "";
+  //   if (animation === "Walking") {
+  //     anim = "Walk";
+  //   } else if (animation === "Running") {
+  //     anim = "Walk";
+  //   } else if (animation === "Jumping") {
+  //     anim = "Jump";
+  //   } else {
+  //     anim = "Idle";
+  //   }
+  //   console.log(actions[anim]);
+  //   if (anim && actions && actions[anim]) {
+  //     console.log("Playing anim:", anim);
+  //     actions[1]?.play();
+  //     // return () => {
+  //     //   if (actions["Idle"]) {
+  //     //     action?.fadeOut(0.5);
+  //     //   }
+  //     // };
+  //   }
+  // }, [animation, actions, names]);
 };
 
 export default useRemoteAnimations;
