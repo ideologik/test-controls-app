@@ -40,7 +40,7 @@ const App: React.FC = () => {
           <Cubes />
           <MemoizedAvatarPlayer modelUrl={models.male_04} />
         </Physics>
-        <MemoizedAvatarRemote modelUrl="./assets/avatars/FemaleCharacter_Metaverse.glb" />
+        <MemoizedAvatarRemote modelUrl={models.female_07} />
         <MemoizedAvatar
           position={[1.5, 0, 0]}
           modelUrl={models.male_13}
