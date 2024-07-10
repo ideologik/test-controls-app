@@ -3,7 +3,10 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import usePlayerStore from "../../../stores/usePlayerStore";
+import usePlayerStore, {
+  selectPosition,
+  selectRotation,
+} from "../../../stores/usePlayerStore";
 
 //import useRemoteAnimations from "./useRemoteAnimations";
 
@@ -23,27 +26,22 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
   // const cloneAnimations = cloneDeep(animations);
   const { actions, names } = useAnimations(animations, avatarRef);
 
-  const positionRef = useRef(usePlayerStore.getState().position);
-  const rotationRef = useRef(usePlayerStore.getState().rotation);
+  const position = usePlayerStore(selectPosition);
+  const rotation = usePlayerStore(selectRotation);
 
   const lerpPosition = useRef(new THREE.Vector3());
   const slerpRotation = useRef(new THREE.Quaternion());
 
   useFrame((_, delta) => {
-    if (
-      groupRef.current &&
-      avatarRef.current &&
-      positionRef.current &&
-      rotationRef.current
-    ) {
+    if (groupRef.current && avatarRef.current && position && rotation) {
       // Interpolación suave para la posición
-      lerpPosition.current.lerp(positionRef.current, delta * 5); // Ajusta el factor de interpolación según sea necesario
+      lerpPosition.current.lerp(position, delta * 5); // Ajusta el factor de interpolación según sea necesario
       groupRef.current.position.copy(lerpPosition.current);
 
       // Interpolación suave para la rotación
       slerpRotation.current.slerpQuaternions(
         groupRef.current.quaternion,
-        rotationRef.current,
+        rotation,
         delta * 5
       ); // Ajusta el factor de interpolación según sea necesario
       groupRef.current.quaternion.copy(slerpRotation.current);
