@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import usePlayerStore, {
+  selectAnimation,
   selectPosition,
   selectRotation,
 } from "../../../stores/usePlayerStore";
@@ -15,21 +16,18 @@ type AvatarRemoteProps = JSX.IntrinsicElements["group"] & {
 };
 
 const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
-  console.log("AvatarRemote");
-  const avatarRef = useRef<THREE.Group>(null);
   const groupRef = useRef<THREE.Group>(null);
+  
+  const avatarRef = useRef<THREE.Object3D>(null);
 
-  const { scene: avatarScene, animations } = useGLTF(modelUrl);
-  const avatarClone = SkeletonUtils.clone(avatarScene);
-
-  //const { animations } = useGLTF("./assets/avatars/Animations.glb");
-  // const cloneAnimations = cloneDeep(animations);
-  const { actions, names } = useAnimations(animations, avatarRef);
-
+  const { scene } = useGLTF(modelUrl);
+  
   const position = usePlayerStore(selectPosition);
+
   const rotation = usePlayerStore(selectRotation);
 
   const lerpPosition = useRef(new THREE.Vector3());
+
   const slerpRotation = useRef(new THREE.Quaternion());
 
   useFrame((_, delta) => {
@@ -48,9 +46,44 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
     }
   });
 
+  const { animations } = useGLTF("./assets/avatars/Animations.glb");
+
+  const { actions, names } = useAnimations(animations, avatarRef);
+
+  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+
+  const [animation, setAnimation] = useState("Idle");
+
+  const animationState = usePlayerStore(selectAnimation);
+  useEffect(() => {
+    if (animationState === "Idle") {
+      setAnimation("Idle");
+    } else if (animationState === "Walk") {
+      setAnimation("Walking");
+    } else if (
+      animationState === "Jump_Idle" ||
+      animationState === "Jump_Start"
+    ) {
+      setAnimation("Jumping");
+    } else if (animationState === "Run") {
+      setAnimation("Running");
+    }
+  }, [animationState]);
+  useEffect(() => {
+    if (animation && actions && actions[animation]) {
+      console.log("entre al useEffect", animation);
+      const action = actions[animation]?.reset().fadeIn(0.5).play();
+      return () => {
+        if (actions["Idle"]) {
+          action?.fadeOut(0.5);
+        }
+      };
+    }
+  }, [animation, actions, names]);
+
   return (
     <group ref={groupRef} {...props}>
-      <primitive object={avatarClone} ref={avatarRef} />
+      <primitive object={clone} ref={avatarRef} />
     </group>
   );
 };
