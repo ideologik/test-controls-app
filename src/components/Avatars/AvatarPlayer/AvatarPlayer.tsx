@@ -44,12 +44,7 @@ const AvatarPlayer: React.FC<AvatarPlayerProps> = ({ modelUrl, ...props }) => {
 
   return (
     <KeyboardControls map={keyboardMap}>
-      <Ecctrl
-        animated
-        ref={rigidBodyRef}
-        sprintMult={4}
-        jumpForceToGroundMult={30}
-      >
+      <Ecctrl animated ref={rigidBodyRef}>
         <EcctrlAnimation characterURL={modelUrl} animationSet={animationSet}>
           <MemoizedAvatarPlayerBase {...props} modelUrl={modelUrl} />
         </EcctrlAnimation>
