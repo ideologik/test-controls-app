@@ -1,7 +1,13 @@
 import { create } from "zustand";
 import * as THREE from "three";
 
-export type IAvatarAnimation = "Idle" | "Walking" | "Running" | "Jumping";
+export type IAvatarAnimation =
+  | "Idle"
+  | "Walk"
+  | "Run"
+  | "Jump_Start"
+  | "Jump_Idle"
+  | "Jump_Land";
 
 export interface IAvatarState {
   position: THREE.Vector3;
@@ -19,7 +25,7 @@ const initialAvatarState: Omit<
 > = {
   position: new THREE.Vector3(),
   rotation: new THREE.Quaternion(),
-  animation: "Walking",
+  animation: "Idle",
 };
 
 // Crea la tienda usando Zustand
@@ -44,5 +50,10 @@ const usePlayerStore = create<IAvatarState>((set) => ({
       animation: newAnimation,
     })),
 }));
+
+// Selectores personalizados
+export const selectPosition = (state: IAvatarState) => state.position;
+export const selectRotation = (state: IAvatarState) => state.rotation;
+export const selectAnimation = (state: IAvatarState) => state.animation;
 
 export default usePlayerStore;

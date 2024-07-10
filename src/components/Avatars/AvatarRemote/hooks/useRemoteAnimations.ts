@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAnimations } from "@react-three/drei";
 import * as THREE from "three";
-import usePlayerStore from "../../../../stores/usePlayerStore";
+import { selectAnimation } from "../../../../stores/usePlayerStore";
 
 const useRemoteAnimations = (
   avatarRef: React.RefObject<any>,
@@ -9,7 +9,7 @@ const useRemoteAnimations = (
 ) => {
   console.log("avatarRef", avatarRef);
   const { actions, names } = useAnimations(animations, avatarRef);
-  const animation = usePlayerStore((state) => state.animation);
+  const animation = selectAnimation();
 
   useEffect(() => {
     if (avatarRef && animation && actions && actions["Jump"]) {

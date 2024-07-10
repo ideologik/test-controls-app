@@ -27,11 +27,10 @@ const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
   const curAnimation = useGame((state) => state.curAnimation);
 
   useFrame(() => {
-
     if (curAnimation !== animation) {
       setAnimation(curAnimation as IAvatarAnimation);
     }
-    
+
     if (rigidBodyRef.current) {
       // Calcular la posición y rotación actuales
       const currentPosition = new THREE.Vector3(
