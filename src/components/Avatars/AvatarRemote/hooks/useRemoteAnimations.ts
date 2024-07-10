@@ -10,42 +10,6 @@ const useRemoteAnimations = (
   console.log("avatarRef", avatarRef);
   const { actions, names } = useAnimations(animations, avatarRef);
   const animation = usePlayerStore((state) => state.animation);
-
-  useEffect(() => {
-    if (avatarRef && animation && actions && actions["Jump"]) {
-      console.log("entre al useEffect animation", animation);
-      const action = actions["Jump"]?.reset().fadeIn(0.5).play();
-      return () => {
-        if (actions["Idle"]) {
-          action?.fadeOut(0.5);
-        }
-      };
-    }
-  }, [animation, actions, names, avatarRef]);
-
-  // useEffect(() => {
-  //   console.log(animation);
-  //   let anim = "";
-  //   if (animation === "Walking") {
-  //     anim = "Walk";
-  //   } else if (animation === "Running") {
-  //     anim = "Walk";
-  //   } else if (animation === "Jumping") {
-  //     anim = "Jump";
-  //   } else {
-  //     anim = "Idle";
-  //   }
-  //   console.log(actions[anim]);
-  //   if (anim && actions && actions[anim]) {
-  //     console.log("Playing anim:", anim);
-  //     actions[1]?.play();
-  //     // return () => {
-  //     //   if (actions["Idle"]) {
-  //     //     action?.fadeOut(0.5);
-  //     //   }
-  //     // };
-  //   }
-  // }, [animation, actions, names]);
 };
 
 export default useRemoteAnimations;

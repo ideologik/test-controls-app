@@ -20,6 +20,8 @@ const AvatarPlayer: React.FC<AvatarPlayerProps> = ({ modelUrl, ...props }) => {
       { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
       { name: "rightward", keys: ["ArrowRight", "KeyD"] },
       { name: "jump", keys: ["Space"] },
+      { name: "run", keys: ["Shift"] },
+      { name: "action1", keys: ["KeyF"] },
     ],
     []
   );
@@ -27,12 +29,13 @@ const AvatarPlayer: React.FC<AvatarPlayerProps> = ({ modelUrl, ...props }) => {
   const animationSet = useMemo(
     () => ({
       idle: "Idle",
-      walk: "Walking",
-      run: "Running",
-      jump: "Jumping",
-      jumpIdle: "Jumping",
-      jumpLand: "Jumping",
-      fall: "Jumping",
+      walk: "Walk",
+      run: "Run",
+      jump: "Jump_Start",
+      jumpIdle: "Jump_Idle",
+      jumpLand: "Jump_Land",
+      fall: "Jump_Start",
+      action1: "Throw_Object",
     }),
     []
   );
@@ -41,11 +44,13 @@ const AvatarPlayer: React.FC<AvatarPlayerProps> = ({ modelUrl, ...props }) => {
 
   return (
     <KeyboardControls map={keyboardMap}>
-      <Ecctrl animated ref={rigidBodyRef}>
-        <EcctrlAnimation
-          characterURL={"./assets/avatars/Animations.glb"}
-          animationSet={animationSet}
-        >
+      <Ecctrl
+        animated
+        ref={rigidBodyRef}
+        sprintMult={4}
+        jumpForceToGroundMult={30}
+      >
+        <EcctrlAnimation characterURL={modelUrl} animationSet={animationSet}>
           <MemoizedAvatarPlayerBase {...props} modelUrl={modelUrl} />
         </EcctrlAnimation>
       </Ecctrl>

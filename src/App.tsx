@@ -17,12 +17,13 @@ const MemoizedAvatarRemote = React.memo(AvatarRemote);
 
 const models = {
   animations: "./assets/avatars/Animations.glb",
-  male_04: "./assets/avatars/SK_Custom_male_04.glb",
-  male_13: "./assets/avatars/SK_Custom_male_13.glb",
-  female_07: "./assets/avatars/SK_Custom_female_07.glb",
-  female_09: "./assets/avatars/SK_Custom_female_09.glb",
+  male_04: "./assets/avatars/SK_Custom_male_04_anim.glb",
+  male_13: "./assets/avatars/SK_Custom_male_13_anim.glb",
+  female_07: "./assets/avatars/SK_Custom_female_07_anim.glb",
+  female_09: "./assets/avatars/SK_Custom_female_09_anim.glb",
   robot: "./assets/avatars/jaxa_iss_int-ball.glb",
   demon: "./assets/avatars/demon.glb",
+  abel: "./assets/avatars/abel__lowpoly_character.glb",
 };
 
 const App: React.FC = () => {
@@ -40,26 +41,27 @@ const App: React.FC = () => {
           <Cubes />
           <MemoizedAvatarPlayer modelUrl={models.male_04} />
         </Physics>
-        <MemoizedAvatarRemote modelUrl="./assets/avatars/FemaleCharacter_Metaverse.glb" />
+        <MemoizedAvatarRemote modelUrl={models.female_07} />
         <MemoizedAvatar
-          position={[1.5, 0, 0]}
-          modelUrl={models.male_13}
-          animation="Walking"
+          position={[1.5, 1.65, 0]}
+          scale={[0.15, 0.15, 0.15]}
+          modelUrl={models.abel}
+          animation="Walk"
         />
         <MemoizedAvatar
           position={[3, 0, 0]}
           modelUrl={models.female_07}
-          animation="Running"
+          animation="Run"
         />
         <MemoizedAvatar
           position={[4.5, 0, 0]}
           modelUrl={models.female_09}
-          animation="Jumping"
+          animation="Jump_Start"
         />
         <MemoizedAvatar
           position={[6, 0, 0]}
           modelUrl={models.male_04}
-          animation="Jumping"
+          animation="Jump_Idle"
         />
         <OrbitControls />
         <Stats />

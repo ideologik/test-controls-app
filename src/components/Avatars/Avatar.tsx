@@ -17,11 +17,11 @@ const Avatar: React.FC<AvatarProps> = ({
   console.log("render Avatar");
   const avatarRef = useRef<THREE.Group>(null);
 
-  const { scene: avatarScene } = useGLTF(modelUrl);
+  const { scene: avatarScene, animations } = useGLTF(modelUrl);
   const avatarClone = SkeletonUtils.clone(avatarScene);
-  const { animations } = useGLTF("./assets/avatars/Animations.glb");
-  const cloneAnimations = cloneDeep(animations);
-  const { actions, names } = useAnimations(cloneAnimations, avatarRef);
+  //const { animations } = useGLTF("./assets/avatars/Animations.glb");
+  // const cloneAnimations = cloneDeep(animations);
+  const { actions, names } = useAnimations(animations, avatarRef);
 
   useEffect(() => {
     if (animation && actions && actions[animation]) {
