@@ -17,11 +17,11 @@ type AvatarRemoteProps = JSX.IntrinsicElements["group"] & {
 
 const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
   const groupRef = useRef<THREE.Group>(null);
-  
+
   const avatarRef = useRef<THREE.Object3D>(null);
 
-  const { scene } = useGLTF(modelUrl);
-  
+  const { scene, animations } = useGLTF(modelUrl);
+
   const position = usePlayerStore(selectPosition);
 
   const rotation = usePlayerStore(selectRotation);
@@ -46,7 +46,7 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
     }
   });
 
-  const { animations } = useGLTF("./assets/avatars/Animations.glb");
+  //const { animations } = useGLTF("./assets/avatars/Animations.glb");
 
   const { actions, names } = useAnimations(animations, avatarRef);
 
@@ -56,18 +56,7 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({ modelUrl, ...props }) => {
 
   const animationState = usePlayerStore(selectAnimation);
   useEffect(() => {
-    if (animationState === "Idle") {
-      setAnimation("Idle");
-    } else if (animationState === "Walk") {
-      setAnimation("Walking");
-    } else if (
-      animationState === "Jump_Idle" ||
-      animationState === "Jump_Start"
-    ) {
-      setAnimation("Jumping");
-    } else if (animationState === "Run") {
-      setAnimation("Running");
-    }
+    setAnimation(animationState);
   }, [animationState]);
   useEffect(() => {
     if (animation && actions && actions[animation]) {
