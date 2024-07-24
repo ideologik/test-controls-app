@@ -1,39 +1,66 @@
-import React, { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 
 type AvatarProps = JSX.IntrinsicElements["group"] & {
   modelUrl: string;
-  animation: string | null;
+  animationsUrl?: string | null;
+  animation?: string | null;
 };
 
-const Avatar: React.FC<AvatarProps> = ({
-  modelUrl,
-  animation = "Idle",
-  ...props
-}) => {
-  console.log("render Avatar");
-  const avatarRef = useRef<THREE.Group>(null);
+export interface AvatarHandle {
+  setAnimation: (animationName: string) => void;
+}
 
-  const { scene: avatarScene } = useGLTF(modelUrl);
-  const avatarClone = SkeletonUtils.clone(avatarScene);
-  const { animations } = useGLTF("./assets/avatars/Animations.glb");
-  const { actions, names } = useAnimations(animations, avatarRef);
+const DEFAULT_ANIMATION = "Idle";
 
-  useEffect(() => {
-    if (animation && actions && actions[animation]) {
-      console.log("entre al useEffect", animation);
-      const action = actions[animation]?.reset().play();
-      return () => {
-        if (actions["Idle"]) {
-          action?.fadeOut(0.5);
+const Avatar = forwardRef<AvatarHandle, AvatarProps>(
+  (
+    { modelUrl, animationsUrl = null, animation = DEFAULT_ANIMATION, ...props },
+    ref
+  ) => {
+    console.log("render Avatar");
+    const avatarRef = useRef<THREE.Group>(null);
+    const currentAnimation = useRef(animation);
+    const action = useRef<THREE.AnimationAction | undefined>(undefined);
+
+    // Carga el modelo y sus animaciones
+    const modelGLTF = useGLTF(modelUrl);
+    const { scene: avatarScene } = modelGLTF;
+    const avatarClone = useRef(SkeletonUtils.clone(avatarScene)).current;
+
+    // Carga las animaciones desde animationsUrl si está presente, o usa las animaciones del modelo
+    const animationsGLTF = useGLTF(animationsUrl || modelUrl);
+    const animations = animationsUrl
+      ? animationsGLTF.animations
+      : modelGLTF.animations;
+
+    const { actions } = useAnimations(animations, avatarRef);
+
+    useImperativeHandle(ref, () => ({
+      setAnimation: (animationName: string) => {
+        if (actions && actions[animationName]) {
+          console.log("cambiar a animación", animationName);
+          currentAnimation.current = animationName;
+          action.current?.fadeOut(0.5);
+          action.current = actions[animationName]?.reset().fadeIn(0.5).play();
         }
-      };
-    }
-  }, [animation, actions, names]);
+      },
+    }));
 
-  return <primitive {...props} object={avatarClone} ref={avatarRef} />;
-};
+    useEffect(() => {
+      if (actions && currentAnimation.current) {
+        console.log("entre al useEffect", currentAnimation.current);
+        action.current = actions[currentAnimation.current]?.reset().play();
+        return () => {
+          action.current?.fadeOut(0.5);
+        };
+      }
+    }, [actions]);
+
+    return <primitive {...props} object={avatarClone} ref={avatarRef} />;
+  }
+);
 
 export default Avatar;
