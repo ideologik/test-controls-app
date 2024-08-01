@@ -3,64 +3,82 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 
+// Definición de tipos para las propiedades del componente Avatar
 type AvatarProps = JSX.IntrinsicElements["group"] & {
-  modelUrl: string;
-  animationsUrl?: string | null;
-  animation?: string | null;
+  modelUrl: string; // URL del modelo GLTF
+  animationsUrl?: string | null; // URL opcional para las animaciones GLTF
+  animation?: string | null; // Nombre de la animación inicial
 };
 
+// Interfaz que define el método setAnimation para el componente Avatar
 export interface AvatarHandle {
-  setAnimation: (animationName: string) => void;
+  setAnimation: (animationName: string) => void; // Método para cambiar la animación
 }
 
+// Constante para la animación por defecto
 const DEFAULT_ANIMATION = "Idle";
 
+// Definición del componente Avatar usando forwardRef para manejar referencias
 const Avatar = forwardRef<AvatarHandle, AvatarProps>(
   (
     { modelUrl, animationsUrl = null, animation = DEFAULT_ANIMATION, ...props },
     ref
   ) => {
-    console.log("render Avatar");
+    console.log("render Avatar"); // Log para ver cuando se renderiza el componente
+
+    // Referencia para el grupo del avatar
     const avatarRef = useRef<THREE.Group>(null);
+    // Referencia para la animación actual
     const currentAnimation = useRef(animation);
+    // Referencia para la acción de animación actual
     const action = useRef<THREE.AnimationAction | undefined>(undefined);
 
-    // Carga el modelo y sus animaciones
+    // Carga el modelo GLTF desde la URL proporcionada
     const modelGLTF = useGLTF(modelUrl);
     const { scene: avatarScene } = modelGLTF;
+    // Clona la escena del modelo para evitar modificaciones directas
     const avatarClone = useRef(SkeletonUtils.clone(avatarScene)).current;
 
-    // Carga las animaciones desde animationsUrl si está presente, o usa las animaciones del modelo
+    // Carga las animaciones GLTF desde la URL proporcionada o desde el modelo si no se proporciona una URL específica
     const animationsGLTF = useGLTF(animationsUrl || modelUrl);
     const animations = animationsUrl
       ? animationsGLTF.animations
       : modelGLTF.animations;
 
+    // Inicializa las animaciones y las asocia con avatarRef
     const { actions } = useAnimations(animations, avatarRef);
 
+    // Define un método imperativo para cambiar la animación desde fuera del componente
     useImperativeHandle(ref, () => ({
       setAnimation: (animationName: string) => {
         if (actions && actions[animationName]) {
-          console.log("cambiar a animación", animationName);
-          currentAnimation.current = animationName;
+          console.log("cambiar a animación", animationName); // Log para ver cuando se cambia la animación
+          currentAnimation.current = animationName; // Actualiza la animación actual
+          // Detiene la animación actual con un desvanecimiento
           action.current?.fadeOut(0.5);
+          // Inicia la nueva animación con un desvanecimiento
           action.current = actions[animationName]?.reset().fadeIn(0.5).play();
         }
       },
     }));
 
+    // Efecto que se ejecuta cuando las acciones o la animación actual cambian
     useEffect(() => {
       if (actions && currentAnimation.current) {
-        console.log("entre al useEffect", currentAnimation.current);
+        console.log("entre al useEffect", currentAnimation.current); // Log para ver cuando se ejecuta el useEffect
+        // Inicia la animación actual
         action.current = actions[currentAnimation.current]?.reset().play();
+        // Limpieza: detiene la animación actual cuando el componente se desmonta
         return () => {
           action.current?.fadeOut(0.5);
         };
       }
-    }, [actions]);
+    }, [actions]); // Dependencias del efecto
 
+    // Renderiza el componente Avatar con el modelo clonado y la referencia asociada
     return <primitive {...props} object={avatarClone} ref={avatarRef} />;
   }
 );
 
+// Exporta el componente Avatar para su uso en otros lugares
 export default Avatar;
