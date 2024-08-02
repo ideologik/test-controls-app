@@ -33,13 +33,11 @@ const AvatarController: React.FC<AvatarControllerProps> = ({
   const animationSet = useMemo(
     () => ({
       idle: "Idle",
-      walk: "Walk",
-      run: "Run",
-      jump: "Jump_Start",
-      jumpIdle: "Jump_Idle",
-      jumpLand: "Jump_Land",
-      fall: "Jump_Start",
-      action1: "Throw_Object",
+      walk: "Walking",
+      run: "Running",
+      jump: "Jumping",
+      jumpIdle: "Jumping",
+      jumpLand: "Jumping",
     }),
     []
   );
@@ -49,7 +47,10 @@ const AvatarController: React.FC<AvatarControllerProps> = ({
   return (
     <KeyboardControls map={keyboardMap}>
       <Ecctrl animated ref={rigidBodyRef}>
-        <EcctrlAnimation characterURL={modelUrl} animationSet={animationSet}>
+        <EcctrlAnimation
+          characterURL={"./assets/avatars/Animations.glb"}
+          animationSet={animationSet}
+        >
           <MemoizedAvatarModel {...props} modelUrl={modelUrl} />
         </EcctrlAnimation>
       </Ecctrl>

@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { useAnimations, useGLTF } from "@react-three/drei";
-import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
+import AvatarModel from "./AvatarModel";
 
 // Definición de tipos para las propiedades del componente Avatar
 type AvatarProps = JSX.IntrinsicElements["group"] & {
@@ -35,9 +35,6 @@ const Avatar = forwardRef<AvatarHandle, AvatarProps>(
 
     // Carga el modelo GLTF desde la URL proporcionada
     const modelGLTF = useGLTF(modelUrl);
-    const { scene: avatarScene } = modelGLTF;
-    // Clona la escena del modelo para evitar modificaciones directas
-    const avatarClone = useRef(SkeletonUtils.clone(avatarScene)).current;
 
     // Carga las animaciones GLTF desde la URL proporcionada o desde el modelo si no se proporciona una URL específica
     const animationsGLTF = useGLTF(animationsUrl || modelUrl);
@@ -75,8 +72,8 @@ const Avatar = forwardRef<AvatarHandle, AvatarProps>(
       }
     }, [actions]); // Dependencias del efecto
 
-    // Renderiza el componente Avatar con el modelo clonado y la referencia asociada
-    return <primitive {...props} object={avatarClone} ref={avatarRef} />;
+    // Renderiza el componente AvatarModel con la referencia avatarRef asociada
+    return <AvatarModel {...props} modelUrl={modelUrl} ref={avatarRef} />;
   }
 );
 

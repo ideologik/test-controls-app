@@ -4,11 +4,12 @@ import { Environment, OrbitControls, Stats, useGLTF } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { EcctrlJoystick } from "ecctrl";
 import Floor from "./components/Floor";
-import Avatar, { AvatarHandle } from "./components/Avatars/Avatar";
+import { Avatar, AvatarController } from "./components/Avatar";
+import { AvatarHandle } from "./components/Avatar/Avatar";
 
 // Memoizing the components to avoid unnecessary re-renders
 const MemoizedFloor = React.memo(Floor);
-//const MemoizedAvatarPlayer = React.memo(AvatarPlayer);
+const MemoizedAvatarPlayer = React.memo(AvatarController);
 const MemoizedAvatar = React.memo(Avatar);
 //const MemoizedAvatarRemote = React.memo(AvatarRemote);
 
@@ -43,7 +44,7 @@ const App: React.FC = () => {
         <Physics>
           <MemoizedFloor />
           {/* <Cubes /> */}
-          {/* <MemoizedAvatarPlayer modelUrl={models.male_04} /> */}
+          <MemoizedAvatarPlayer modelUrl={models.male_04} />
         </Physics>
         {/* <MemoizedAvatarRemote modelUrl={models.female_07} /> */}
         <MemoizedAvatar
