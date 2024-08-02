@@ -3,28 +3,28 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import AvatarModel from "./AvatarModel";
 
-// Definición de tipos para las propiedades del componente Avatar
-type AvatarProps = JSX.IntrinsicElements["group"] & {
+// Definición de tipos para las propiedades del componente AvatarAnimated
+type AvatarAnimatedProps = JSX.IntrinsicElements["group"] & {
   modelUrl: string; // URL del modelo GLTF
   animationsUrl?: string | null; // URL opcional para las animaciones GLTF
   animation?: string | null; // Nombre de la animación inicial
 };
 
-// Interfaz que define el método setAnimation para el componente Avatar
-export interface AvatarHandle {
+// Interfaz que define el método setAnimation para el componente AvatarAnimated
+export interface AvatarAnimatedHandle {
   setAnimation: (animationName: string) => void; // Método para cambiar la animación
 }
 
 // Constante para la animación por defecto
 const DEFAULT_ANIMATION = "Idle";
 
-// Definición del componente Avatar usando forwardRef para manejar referencias
-const Avatar = forwardRef<AvatarHandle, AvatarProps>(
+// Definición del componente AvatarAnimated usando forwardRef para manejar referencias
+const AvatarAnimated = forwardRef<AvatarAnimatedHandle, AvatarAnimatedProps>(
   (
     { modelUrl, animationsUrl = null, animation = DEFAULT_ANIMATION, ...props },
     ref
   ) => {
-    console.log("render Avatar"); // Log para ver cuando se renderiza el componente
+    console.log("render AvatarAnimated"); // Log para ver cuando se renderiza el componente
 
     // Referencia para el grupo del avatar
     const avatarRef = useRef<THREE.Group>(null);
@@ -77,5 +77,5 @@ const Avatar = forwardRef<AvatarHandle, AvatarProps>(
   }
 );
 
-// Exporta el componente Avatar para su uso en otros lugares
-export default Avatar;
+// Exporta el componente AvatarAnimated para su uso en otros lugares
+export default AvatarAnimated;

@@ -4,13 +4,13 @@ import { Environment, OrbitControls, Stats, useGLTF } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { EcctrlJoystick } from "ecctrl";
 import Floor from "./components/Floor";
-import { Avatar, AvatarController } from "./components/Avatar";
-import { AvatarHandle } from "./components/Avatar/Avatar";
+import { AvatarAnimated, AvatarController } from "./components/Avatar";
+import { AvatarAnimatedHandle } from "./components/Avatar/AvatarAnimated";
 
 // Memoizing the components to avoid unnecessary re-renders
 const MemoizedFloor = React.memo(Floor);
 const MemoizedAvatarPlayer = React.memo(AvatarController);
-const MemoizedAvatar = React.memo(Avatar);
+const MemoizedAvatar = React.memo(AvatarAnimated);
 //const MemoizedAvatarRemote = React.memo(AvatarRemote);
 
 const models = {
@@ -25,7 +25,7 @@ const models = {
 
 const App: React.FC = () => {
   console.log("render App");
-  const avatarRef = useRef<AvatarHandle>(null);
+  const avatarRef = useRef<AvatarAnimatedHandle>(null);
   const changeAnimation = () => {
     console.log("entro al changeAnimation");
     if (avatarRef.current) {

@@ -41,6 +41,7 @@ const AvatarController: React.FC<AvatarControllerProps> = ({
     }),
     []
   );
+
   const rigidBodyRef = useRef<RapierRigidBody | null>(null);
   usePlayerState(rigidBodyRef);
 
