@@ -41,10 +41,13 @@ const App: React.FC = () => {
         <Environment preset="sunset" />
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-        <Physics>
+        <Physics timeStep="vary">
           <MemoizedFloor />
           {/* <Cubes /> */}
-          <MemoizedAvatarPlayer modelUrl={models.male_04} />
+          <MemoizedAvatarPlayer
+            modelUrl={models.male_04}
+            position={[0, -0.91, 0]}
+          />
         </Physics>
         {/* <MemoizedAvatarRemote modelUrl={models.female_07} /> */}
         <MemoizedAvatar
