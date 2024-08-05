@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAnimations, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 import usePlayerStore, {
   selectPosition,
@@ -20,7 +19,6 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
   animationsUrl,
   ...props
 }) => {
-  console.log("entre xxx al AvatarRemote");
   const groupRef = useRef<THREE.Group>(null);
   const avatarRef = useRef<THREE.Group>(null);
 
@@ -46,10 +44,13 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
     }
   });
 
+  const animationState = usePlayerStore(selectAnimation);
   const modelGLTF = useGLTF(modelUrl);
-  const avatarClone = SkeletonUtils.clone(modelGLTF.scene);
+  const clone = useMemo(
+    () => SkeletonUtils.clone(modelGLTF.scene),
+    [modelGLTF.scene]
+  );
 
-  // Carga las animaciones GLTF desde la URL proporcionada o desde el modelo si no se proporciona una URL específica
   const animationsGLTF = useGLTF(animationsUrl || modelUrl);
   const animations = animationsUrl
     ? animationsGLTF.animations
@@ -59,14 +60,13 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
 
   const [animation, setAnimation] = useState("Idle");
 
-  const animationState = usePlayerStore(selectAnimation);
   useEffect(() => {
     setAnimation(animationState);
   }, [animationState]);
 
   useEffect(() => {
     if (animation && actions && actions[animation]) {
-      console.log("entre xxx al useEffect", animation);
+      console.log("entre al useEffect", animation);
       const action = actions[animation]?.reset().fadeIn(0.5).play();
       return () => {
         if (actions["Idle"]) {
@@ -78,7 +78,7 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
 
   return (
     <group ref={groupRef}>
-      <primitive object={avatarClone} {...props} ref={avatarRef} />
+      <primitive object={clone} {...props} ref={avatarRef} />
     </group>
   );
 };
