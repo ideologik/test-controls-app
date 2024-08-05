@@ -49,7 +49,7 @@ const AvatarAnimated = forwardRef<AvatarAnimatedHandle, AvatarAnimatedProps>(
     useImperativeHandle(ref, () => ({
       setAnimation: (animationName: string) => {
         if (actions && actions[animationName]) {
-          console.log("cambiar a animación", animationName); // Log para ver cuando se cambia la animación
+          console.log("entro cambiar a animación", animationName); // Log para ver cuando se cambia la animación
           currentAnimation.current = animationName; // Actualiza la animación actual
           // Detiene la animación actual con un desvanecimiento
           action.current?.fadeOut(0.5);
