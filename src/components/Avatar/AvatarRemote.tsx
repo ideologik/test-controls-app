@@ -14,6 +14,9 @@ type AvatarRemoteProps = JSX.IntrinsicElements["group"] & {
   animationsUrl: string;
 };
 
+// Constante para la animación por defecto
+const DEFAULT_ANIMATION = "Idle";
+
 const AvatarRemote: React.FC<AvatarRemoteProps> = ({
   modelUrl,
   animationsUrl,
@@ -58,7 +61,18 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
 
   const { actions, names } = useAnimations(animations, avatarRef);
 
-  const [animation, setAnimation] = useState("Idle");
+  const [animation, setAnimation] = useState(DEFAULT_ANIMATION);
+
+  useEffect(() => {
+    if (actions && actions[DEFAULT_ANIMATION]) {
+      const initialAction = actions[DEFAULT_ANIMATION].reset()
+        .fadeIn(0.5)
+        .play();
+      return () => {
+        initialAction.fadeOut(0.5);
+      };
+    }
+  }, [actions]);
 
   useEffect(() => {
     setAnimation(animationState);
@@ -69,7 +83,7 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
       console.log("entre al useEffect", animation);
       const action = actions[animation]?.reset().fadeIn(0.5).play();
       return () => {
-        if (actions["Idle"]) {
+        if (actions[DEFAULT_ANIMATION]) {
           action?.fadeOut(0.5);
         }
       };
