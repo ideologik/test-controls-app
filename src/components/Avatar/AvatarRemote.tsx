@@ -3,11 +3,7 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
-import usePlayerStore, {
-  selectPosition,
-  selectRotation,
-  selectAnimation,
-} from "../../stores/usePlayerStore";
+import usePlayerStore from "../../stores/playerStore";
 
 type AvatarRemoteProps = JSX.IntrinsicElements["group"] & {
   modelUrl: string;
@@ -25,8 +21,8 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
   const groupRef = useRef<THREE.Group>(null);
   const avatarRef = useRef<THREE.Group>(null);
 
-  const position = usePlayerStore(selectPosition);
-  const rotation = usePlayerStore(selectRotation);
+  const position = usePlayerStore((state) => state.localAvatar.position);
+  const rotation = usePlayerStore((state) => state.localAvatar.rotation);
 
   const lerpPosition = useRef(new THREE.Vector3());
   const slerpRotation = useRef(new THREE.Quaternion());
@@ -47,7 +43,7 @@ const AvatarRemote: React.FC<AvatarRemoteProps> = ({
     }
   });
 
-  const animationState = usePlayerStore(selectAnimation);
+  const animationState = usePlayerStore((state) => state.localAvatar.animation);
   const modelGLTF = useGLTF(modelUrl);
   const clone = useMemo(
     () => SkeletonUtils.clone(modelGLTF.scene),

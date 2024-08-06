@@ -23,8 +23,6 @@ const models = {
   male_13: "./assets/avatars/SK_Custom_male_13.glb",
   female_07: "./assets/avatars/SK_Custom_female_07.glb",
   female_09: "./assets/avatars/SK_Custom_female_09.glb",
-  robot: "./assets/avatars/jaxa_iss_int-ball.glb",
-  demon: "./assets/avatars/demon.glb",
 };
 
 const App: React.FC = () => {

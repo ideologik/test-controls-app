@@ -5,21 +5,20 @@ import { useCallback, useRef } from "react";
 import * as THREE from "three";
 
 import { useGame } from "ecctrl";
-import usePlayerStore, {
-  IAvatarAnimation,
-} from "../../../stores/usePlayerStore";
+import usePlayerStore from "../../../stores/playerStore";
+import { IAvatarAnimation } from "../../../stores/types";
 
 const usePlayerState = (rigidBodyRef: React.RefObject<RapierRigidBody>) => {
-  const setPosition = usePlayerStore((state) => state.setPosition);
-  const setRotation = usePlayerStore((state) => state.setRotation);
-  const setAnimation = usePlayerStore((state) => state.setAnimation);
+  const setPosition = usePlayerStore((state) => state.setLocalAvatarPosition);
+  const setRotation = usePlayerStore((state) => state.setLocalAvatarRotation);
+  const setAnimation = usePlayerStore((state) => state.setLocalAvatarAnimation);
 
   const lastPositionRef = useRef<THREE.Vector3>(new THREE.Vector3());
   const lastRotationRef = useRef<THREE.Quaternion>(new THREE.Quaternion());
 
   console.log("usePlayerState render");
 
-  const animation = usePlayerStore((state) => state.animation);
+  const animation = usePlayerStore((state) => state.localAvatar.animation);
   const roundValue = useCallback((value: number, precision: number): number => {
     const factor = Math.pow(10, precision);
     return Math.round(value * factor) / factor;
